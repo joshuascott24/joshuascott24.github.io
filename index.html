@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joshua | AI Integration Specialist</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cyber-blue: #00e5ff;
+            --cyber-dark: #1a1a1a;
+            --cyber-light: rgba(255, 255, 255, 0.85);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
+
+        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #ffffff; }
+
+        /* --- Boot Screen --- */
+        #boot-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #ffffff; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 100;
+            transition: opacity 1s ease-in-out;
+        }
+
+        #init-btn {
+            padding: 15px 40px; font-size: 1.2rem; letter-spacing: 4px;
+            color: var(--cyber-dark); background: transparent; border: 1px solid var(--cyber-dark);
+            cursor: pointer; position: relative; overflow: hidden; transition: all 0.3s ease;
+        }
+
+        #init-btn:hover {
+            border-color: var(--cyber-blue); color: var(--cyber-blue);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+        }
+
+        /* --- Main UI --- */
+        #main-ui {
+            position: relative; width: 100%; height: 100%;
+            opacity: 0; transition: opacity 1.5s ease-in-out; display: none;
+        }
+
+        #bg-video {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: 0;
+        }
+
+        .video-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.15) 40%, rgba(255,255,255,0) 100%);
+            z-index: 0;
+        }
+
+        /* --- Side Panel --- */
+        .side-panel {
+            position: relative; z-index: 0; width: 450px; height: 100%;
+            padding: 60px 50px; display: flex; flex-direction: column;
+            border-right: 1px solid rgba(0, 229, 255, 0.2); backdrop-filter: blur(5px);
+        }
+
+        .header { margin-bottom: 50px; position: relative; }
+        .header::before {
+            content: ''; position: absolute; left: -50px; top: 10px;
+            width: 4px; height: 40px; background-color: var(--cyber-blue);
+        }
+        .header h1 { font-size: 3.5rem; font-weight: 700; color: var(--cyber-dark); letter-spacing: 2px; line-height: 1; }
+        .header h2 { font-size: 1.1rem; font-weight: 500; color: #666; letter-spacing: 5px; margin-top: 5px; }
+
+        /* --- Navigation --- */
+        .menu { list-style: none; margin-bottom: 40px; }
+        .menu li {
+            font-size: 1.5rem; font-weight: 600; letter-spacing: 3px; color: var(--cyber-dark);
+            margin-bottom: 15px; cursor: pointer; position: relative; padding-left: 25px; transition: color 0.3s ease;
+        }
+        .menu li::before {
+            content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+            width: 8px; height: 8px; border: 1px solid var(--cyber-dark); transition: all 0.3s ease;
+        }
+        .menu li:hover, .menu li.active { color: var(--cyber-blue); }
+        .menu li:hover::before, .menu li.active::before {
+            background-color: var(--cyber-blue); border-color: var(--cyber-blue); box-shadow: 0 0 10px var(--cyber-blue);
+        }
+
+        /* --- Content Area --- */
+        #content-area { flex-grow: 1; position: relative; }
+        .section-content {
+            position: absolute; top: 0; left: 0; width: 100%;
+            opacity: 0; visibility: hidden; transition: opacity 0.4s ease; color: var(--cyber-dark);
+        }
+        .section-content.active { opacity: 1; visibility: visible; }
+        .section-content h3 {
+            font-size: 1.2rem; letter-spacing: 2px; color: var(--cyber-blue);
+            margin-bottom: 15px; border-bottom: 1px solid var(--cyber-blue); display: inline-block; padding-bottom: 5px;
+        }
+        .section-content p, .section-content ul { font-size: 1.1rem; line-height: 1.6; font-weight: 500; margin-bottom: 15px; }
+        .section-content ul { list-style-type: square; padding-left: 20px; }
+
+        /* --- System Status --- */
+        .system-status {
+            position: absolute; top: 30px; right: 40px; z-index: 10;
+            display: flex; align-items: center; gap: 10px; font-size: 0.9rem; letter-spacing: 2px; color: var(--cyber-dark); font-weight: 600;
+        }
+        .pulse-dot {
+            width: 8px; height: 8px; background-color: var(--cyber-blue); border-radius: 50%;
+            box-shadow: 0 0 8px var(--cyber-blue); animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 229, 255, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 229, 255, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="boot-screen">
+        <button id="init-btn">INITIALIZE SYSTEM</button>
+    </div>
+
+    <div id="main-ui">
+        <video id="bg-video" playsinline>
+            <source src="portfolio-video.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+
+        <div class="system-status">
+            <div class="pulse-dot"></div>
+            SYSTEM ONLINE
+        </div>
+
+        <div class="side-panel">
+            <div class="header">
+                <h1>JOSHUA</h1>
+                <h2>AI INTEGRATION SPECIALIST</h2>
+            </div>
+
+            <ul class="menu">
+                <li class="active" onclick="showSection(event, 'about')">ABOUT</li>
+                <li onclick="showSection(event, 'projects')">PROJECTS</li>
+                <li onclick="showSection(event, 'skills')">SKILLS</li>
+                <li onclick="showSection(event, 'contact')">CONTACT</li>
+            </ul>
+
+            <div id="content-area">
+                <div id="about" class="section-content active">
+                    <h3>// SYSTEM OVERVIEW</h3>
+                    <p>Operating as an AI Integration Specialist, focused on bridging the gap between advanced machine learning concepts and highly optimized, user-centric interfaces.</p>
+                    <p>Based in Raleigh, NC. Driven by solving complex workflow automation challenges and architecting intelligent, scalable digital environments.</p>
+                </div>
+
+                <div id="projects" class="section-content">
+                    <h3>// ACTIVE PROTOCOLS</h3>
+                    <p><strong>GoVo Application</strong><br>
+                    Architected the prototype for a political engagement app utilizing Firebase Studio and Adobe XD, building robust candidate matching logic and UI/UX flows.</p>
+                    <p><strong>Neural Compute Home Lab</strong><br>
+                    Configured a high-performance local AI development ecosystem using PyTorch via WSL2 to build and train neural networks from the ground up.</p>
+                    <p><strong>AI 3D Printing</strong><br>
+                    Created Etsy business by designing original 3D printed pendant using meshyAI and Blender, achieving 5 star rating and positive reviews.</p>
+                </div>
+
+                <div id="skills" class="section-content">
+                    <h3>// CORE DIRECTIVES</h3>
+                    <ul>
+                        <li>AI Workflow Automation (AiseraGTP / ServiceNow)</li>
+                        <li>Front-End Architecture (React / Next.js)</li>
+                        <li>Machine Learning & Compute (PyTorch)</li>
+                        <li>Database & Backend (Firebase Studio)</li>
+                        <li>UI/UX Design (Adobe XD)</li>
+                    </ul>
+                </div>
+
+                <div id="contact" class="section-content">
+                    <h3>// ESTABLISH CONNECTION</h3>
+                    <p>Ready to collaborate on complex system integrations or forward-thinking web applications.</p>
+                    <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/jscott87/" target="_blank">Click Here</a></p>
+                    <p><strong>GitHub:</strong> <a href="https://github.com/joshuascott24" target="_blank">Click Here</a></p>   
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const initBtn = document.getElementById('init-btn');
+        const bootScreen = document.getElementById('boot-screen');
+        const mainUi = document.getElementById('main-ui');
+        const bgVideo = document.getElementById('bg-video');
+
+        // Handle System Initialization
+        initBtn.addEventListener('click', () => {
+            bootScreen.style.opacity = '0';
+            
+            setTimeout(() => {
+                bootScreen.style.display = 'none';
+                mainUi.style.display = 'block';
+                void mainUi.offsetWidth; 
+                mainUi.style.opacity = '1';
+                
+                bgVideo.muted = false;
+                bgVideo.play().catch(error => console.log("Video playback failed:", error));
+            }, 1000);
+        });
+
+        // Safely loop the video without audio
+        bgVideo.addEventListener('ended', () => {
+            bgVideo.muted = true;
+            bgVideo.loop = true;
+            bgVideo.pause();
+            bgVideo.currentTime = 0; 
+            bgVideo.play().catch(error => console.log("Loop playback failed:", error));
+        });
+
+        // Navigation Logic
+        function showSection(e, sectionId) {
+            document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.menu li').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(sectionId).classList.add('active');
+            e.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
